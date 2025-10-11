@@ -1,27 +1,19 @@
 package com.bostonhacks.backend;
 
-import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
-
-import com.bostonhacks.backend.FileService;
-import com.bostonhacks.backend.SensitiveInfoDetector;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.stream.Stream;
-import java.util.Map;
-import java.util.HashMap;
 
 
 @RestController
@@ -56,13 +48,10 @@ public class RequestController {
     @GetMapping("/text-advice")
     public String getTextAdvice(@RequestParam("file") String filename) {
         // fixme return str
-        return Gemini.getInstance().getGemini().models.generateContent(
-            "gemini-2.5-flash",
+        return Gemini.getInstance().getGemini().models.generateContent("gemini-2.5-flash",
             "Please search this text file and examine if there's any personally identifiable information.",
-            null
-        );
+            null);
     }
-
 
     @PostMapping("/upload-text")
     public ResponseEntity<Map<String, Object>> uploadText(
@@ -158,18 +147,15 @@ public class RequestController {
 
 
     @PostMapping("/upload-image")
-    public String uploadImage(
-        @RequestParam("file") MultipartFile file,
-        RedirectAttributes redirectAttributes
-    ) {
+    public String uploadImage(@RequestParam("file") MultipartFile file,
+                              RedirectAttributes redirectAttributes) {
         return "";
     }
 
     @GetMapping("/image-advice")
     public GenerateContentResponse getImageAdvice(@RequestParam("file") String filename) {
         // fixme return str
-        return Gemini.getInstance().getGemini().models.generateContent(
-            "gemini-2.5-flash",
+        return Gemini.getInstance().getGemini().models.generateContent("gemini-2.5-flash",
             "Please search this image and examine if there's any personally identifiable information.",
             null);
     }

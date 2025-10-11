@@ -1,16 +1,15 @@
 package com.bostonhacks.backend;
 
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.UUID;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service // Mark as a Spring service
 public class FileService {
@@ -38,7 +37,7 @@ public class FileService {
     public Path storeFile(MultipartFile file) throws IOException {
         String originalFilename = Objects.requireNonNull(file.getOriginalFilename());
         String cleanedFilename = originalFilename.substring(originalFilename.lastIndexOf('/') + 1)
-                .substring(originalFilename.lastIndexOf('\\') + 1);
+            .substring(originalFilename.lastIndexOf('\\') + 1);
 
         String fileExtension = "";
         int dotIndex = cleanedFilename.lastIndexOf('.');
@@ -46,7 +45,8 @@ public class FileService {
             fileExtension = cleanedFilename.substring(dotIndex);
             cleanedFilename = cleanedFilename.substring(0, dotIndex);
         }
-        String uniqueFileName = cleanedFilename + "_" + UUID.randomUUID().toString() + fileExtension;
+        String uniqueFileName =
+            cleanedFilename + "_" + UUID.randomUUID() + fileExtension;
 
         Path targetLocation = this.uploadDirectory.resolve(uniqueFileName);
 
