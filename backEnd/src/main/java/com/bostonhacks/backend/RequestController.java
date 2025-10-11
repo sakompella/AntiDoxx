@@ -1,12 +1,14 @@
 package com.bostonhacks.backend;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RestController
 public class RequestController {
-  public final static String API_KEY = "AIzaSyD6ev0oDBpe7_424-Jqkl4hZiJVx6cj4-o";
 
   @GetMapping("/text")
   public String getText() {
@@ -14,8 +16,13 @@ public class RequestController {
     return "";
   }
 
-  @GetMapping("/imageAdvice")
-  public String getImage(@RequestParam("")) {
+  @PostMapping("/upload-image")
+  public String uploadImage(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+
+  }
+
+  @GetMapping("/image-advice")
+  public String getImageAdvice(@RequestParam("")) {
 
   }
 }
