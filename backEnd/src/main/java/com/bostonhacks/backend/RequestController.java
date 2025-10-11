@@ -43,10 +43,20 @@ public class RequestController {
           response.put("message", "Only .txt files are allowed.");
           return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
       }
+      response.put("success", true);
+      response.put("message", "Uploaded file successfully!");
+      return new ResponseEntity<>(response, HttpStatus.OK);
 
-  @PostMapping("/upload-image")
-  public String uploadImage(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+  }
 
+
+  
+      @PostMapping("/upload-image")
+  public String uploadImage(
+      @RequestParam("file") MultipartFile file,
+      RedirectAttributes redirectAttributes
+  ) {
+     return "";
   }
 
   @GetMapping("/image-advice")
