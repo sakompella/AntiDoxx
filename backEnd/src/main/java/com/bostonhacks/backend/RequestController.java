@@ -22,7 +22,7 @@ public class RequestController {
   @GetMapping("/text")
   public String getText() {
     // todo
-    return "";
+    return input;
   }
 
   @PostMapping("/upload-text")
