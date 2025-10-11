@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 public class RequestController {
 
   @GetMapping("/text")
-  public String getText() {
+  public String getText(String input) {
     // todo
     return input;
   }
