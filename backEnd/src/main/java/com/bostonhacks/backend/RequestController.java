@@ -18,6 +18,8 @@ import java.util.stream.Stream;
 import java.util.Map;
 import java.util.HashMap;
 
+import static com.bostonhacks.backend.Gemini.client;
+
 @RestController
 public class RequestController {
 
