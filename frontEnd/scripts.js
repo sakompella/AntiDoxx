@@ -1,0 +1,49 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('fileUploadForm');
+    const fileInput = document.getElementById('fileInput');
+    const statusMessage = document.getElementById('statusMessage');
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault(); // Stop the default form submission
+
+        if (fileInput.files.length === 0) {
+            statusMessage.textContent = 'Please select a file to upload.';
+            return;
+        }
+
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        
+        // Append the file to the FormData object.
+        // The 'uploadedFile' key must match the name your backend expects.
+        formData.append('uploadedFile', file); 
+
+        // Optional: Append other data if needed
+        // formData.append('userId', '12345'); 
+
+        statusMessage.textContent = 'Uploading...';
+
+        try {
+            const response = await fetch('/upload-endpoint', { // **Replace with your backend URL**
+                method: 'POST',
+                // When using FormData, the 'Content-Type' header 
+                // is automatically set correctly by the browser, 
+                // including the boundary required for 'multipart/form-data'. 
+                // Do NOT set it manually.
+                body: formData 
+            });
+
+            if (response.ok) {
+                const result = await response.json(); // Assuming your backend returns JSON
+                statusMessage.textContent = `Upload successful! Response: ${result.message}`;
+                form.reset(); // Clear the form
+            } else {
+                const errorText = await response.text();
+                statusMessage.textContent = `Upload failed. Status: ${response.status}. Error: ${errorText.substring(0, 50)}...`;
+            }
+        } catch (error) {
+            console.error('Network error:', error);
+            statusMessage.textContent = 'A network error occurred during upload.';
+        }
+    });
+});
