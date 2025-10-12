@@ -1,46 +1,76 @@
 package com.bostonhacks.backend;
 
-import net.sourceforge.tess4j.ITesseract;
-import net.sourceforge.tess4j.Tesseract;
-import net.sourceforge.tess4j.TesseractException;
+import java.io.FileInputStream;
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class OCRService {
-
+    private static final String KEY = "K88376595988957";
     private static final Logger logger = LoggerFactory.getLogger(OCRService.class);
     private static final List<String> SUPPORTED_EXTENSIONS = Arrays.asList(".png", ".jpg", ".jpeg", ".tiff", ".bmp", ".gif");
 
-    private final ITesseract tesseract;
+    public OCRService() {}
 
-    @Value("${ocr.tessdata.path:tessdata}")
-    private String tessdataPath;
+    public static String doOCR(File imageFile) {
+        try {
+            byte[] bytes = new byte[(int) imageFile.length()];
+            try (FileInputStream fis = new FileInputStream(imageFile)) {
+                fis.read(bytes);
+            }
 
-    @Value("${ocr.language:eng}")
-    private String ocrLanguage;
+            String base64Image = java.util.Base64.getEncoder().encodeToString(bytes);
 
-    public OCRService() {
-        tesseract = new Tesseract();
+            RestTemplate restTemplate = new RestTemplate();
+            String url = "https://api.ocr.space/parse/image";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("apikey", KEY);
+
+            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+            body.add("base64Image", "data:image/jpeg;base64," + base64Image);
+            body.add("language", "eng");
+
+            HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, Map.class);
+
+            if (response.getBody() == null) {
+                return "";
+            }
+
+            Map<String, Object> responseBody = response.getBody();
+            List<Map<String, Object>> parsedResults = (List<Map<String, Object>>) responseBody.get("ParsedResults");
+
+            if (parsedResults == null || parsedResults.isEmpty()) {
+                return "";
+            }
+
+            return (String) parsedResults.getFirst().get("ParsedText");
+        } catch (IOException e) {
+            logger.error("Error reading image file: {}", imageFile.getAbsolutePath(), e);
+            return "";
+        } catch (Exception e) {
+            logger.error("Error calling OCR.space API for file: {}", imageFile.getAbsolutePath(), e);
+            return "";
+        }
     }
 
-    private void initializeTesseract() {
-        if (tessdataPath != null) {
-            tesseract.setDatapath(tessdataPath);
-        }
-        if (ocrLanguage != null) {
-            tesseract.setLanguage(ocrLanguage);
-        }
-        logger.info("OCR Service initialized with tessdata path: {} and language: {}", tessdataPath, ocrLanguage);
-    }
-
-    public String extractTextFromImage(File imageFile) throws TesseractException {
+    public static String extractTextFromImage(File imageFile) {
         if (imageFile == null) {
             throw new IllegalArgumentException("Image file cannot be null");
         }
@@ -57,19 +87,13 @@ public class OCRService {
             throw new IllegalArgumentException("Unsupported image format. Supported formats: " + SUPPORTED_EXTENSIONS);
         }
 
-        try {
-            initializeTesseract();
-            logger.debug("Processing OCR for file: {}", imageFile.getAbsolutePath());
-            String extractedText = tesseract.doOCR(imageFile);
-            logger.debug("OCR completed successfully for file: {}", imageFile.getAbsolutePath());
-            return extractedText != null ? extractedText.trim() : "";
-        } catch (TesseractException e) {
-            logger.error("OCR processing failed for file: {}", imageFile.getAbsolutePath(), e);
-            throw e;
-        }
+        logger.debug("Processing OCR for file: {}", imageFile.getAbsolutePath());
+        String extractedText = doOCR(imageFile);
+        logger.debug("OCR completed successfully for file: {}", imageFile.getAbsolutePath());
+        return extractedText != null ? extractedText.trim() : "";
     }
 
-    private boolean isValidImageFormat(File imageFile) {
+    private static boolean isValidImageFormat(File imageFile) {
         String fileName = imageFile.getName().toLowerCase();
         return SUPPORTED_EXTENSIONS.stream().anyMatch(fileName::endsWith);
     }

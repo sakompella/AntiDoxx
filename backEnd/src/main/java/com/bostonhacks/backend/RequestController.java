@@ -182,11 +182,6 @@ public class RequestController {
             return new ResponseEntity<>(
                 Map.of("code", -1, "message", "Error: Unable to read file - " + e.getMessage()),
                 HttpStatus.BAD_REQUEST);
-        } catch (TesseractException e) {
-            logger.error("OCR processing failed for file: {}", filename, e);
-            return new ResponseEntity<>(
-                Map.of("code", -1, "message", "Error: OCR processing failed - " + e.getMessage()),
-                HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             logger.error("Error analyzing file: {}", filename, e);
             return new ResponseEntity<>(
