@@ -1,6 +1,8 @@
 package com.bostonhacks.backend;
 
 import com.google.genai.types.GenerateContentResponse;
+
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -35,9 +37,9 @@ public class RequestController {
     public String getText(@RequestBody String input) {
         try {
             // Step 1: Save input string as a temporary .txt file
-            Path tempFile = Files.createTempFile("user-input-", ".txt");
+            Path tempFile = storageHandler.storeFile(input, input.getBytes());
             Files.writeString(tempFile, input, StandardCharsets.UTF_8);
-            System.out.println("📄 File created: " + tempFile.toAbsolutePath());
+            System.out.println("File created: " + tempFile.toAbsolutePath());
 
             // Step 2: Call Gemini to analyze the text file
             String advice = getTextAdvice(tempFile.toString());
@@ -173,4 +175,4 @@ public class RequestController {
             "Please search this image and examine if there's any personally identifiable information.",
             null);
     }
-}
+    }
