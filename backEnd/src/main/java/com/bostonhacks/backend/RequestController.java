@@ -153,8 +153,7 @@ public class RequestController {
             response.put("filename", storedFilePath.getFileName().toString());
             // No sensitive information found
             response.put("message", "File '" + originalFilename +
-                "' uploaded successfully and no sensitive information was detected.");
-            response.put("sensitiveInfoDetails", "No sensitive information found.");
+                "' uploaded successfully.");
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (IOException e) {
