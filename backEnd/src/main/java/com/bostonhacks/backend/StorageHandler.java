@@ -104,7 +104,9 @@ public class StorageHandler {
         Path filePath = storageDirectory.resolve(filename);
         Files.deleteIfExists(filePath);
     }
-
+    public String mimeType(Path path) throws IOException {
+        return Files.probeContentType(path);
+    }
     public Path fetchFile(String filename) throws IOException {
         Path targetLocation = this.storageDirectory.resolve(filename);
         if (Files.exists(targetLocation)) {
