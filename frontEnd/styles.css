@@ -17,6 +17,15 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
+    border-bottom: 1px solid light-dark(#ccc, #555);
+}
+
+#input-panel, #response-panel {
+    flex: 1;
+    padding: 20px;
+    border: 1px solid light-dark(#ccc, #555);
+    border-radius: 5px;
+    background-color: light-dark(#f9f9f9, #1e1e1e);
 }
 
 #theme-toggle {
@@ -25,23 +34,99 @@ header {
     font-size: 1rem;
     cursor: pointer;
     border: 1px solid #333;
-    background-color: #333;
+    background-color: light-dark(#f2f2f2, #333);
+    color: light-dark(#333, #f2f2f2);
     border-radius: 8px;
     transition: background-color 0.3s;
 }
 
 #main-content {
-    width: 80%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    gap: 20px;
+}
+
+.upload-place {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0px;
 }
 
 #fileUploadForm {
+    align-items: right;
+    flex: 1;
     width: 100%;
-    max-width: 800px;
-    margin: 20px auto;
+    max-width: 100%;
+    margin: 0;
     padding: 20px;
-    border: 1px solid #ccc;
+    border: 1px solid light-dark(#ccc, #555);
     border-radius: 5px;
 }
+
+#textUploadForm {
+    align-items: left;
+    flex: 1;
+    width: 100%;
+    max-width: 800px;
+    margin: 0;
+    padding: 20px;
+    border: 1px solid light-dark(#ccc, #555);
+    border-radius: 5px;
+}
+
+#response-panel {
+    flex: 1;
+    width: 100%;
+    max-width: 800px;
+    margin: 0;
+    padding: 20px;
+    border: 1px solid light-dark(#ccc, #555);
+    border-radius: 5px;
+    background-color: light-dark(#f9f9f9, #1e1e1e);
+    overflow-y: auto;
+    max-height: 80vh;
+}
+
+
+.tab-container {
+    display: flex;
+    border-bottom: 1px solid light-dark(#ccc, #555);
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    padding: 10px 15px;
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    color: inherit;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-button.active {
+    border-bottom-color: #007bff;
+    font-weight: bold;
+}
+
+.tab-content.hidden {
+    display: none;
+}
+
+textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 3px;
+    border: 1px solid light-dark(#ccc, #555);
+    background-color: light-dark(white, #2c2c2c);
+    color: inherit;
+    font-family: inherit;
+}
+
 button {
     padding: 10px 15px;
     background-color: #007bff;
@@ -50,6 +135,7 @@ button {
     border-radius: 3px;
     cursor: pointer;
 }
+
 #statusMessage {
     margin-top: 10px;
     font-weight: bold;

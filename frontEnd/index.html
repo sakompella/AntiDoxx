@@ -7,7 +7,7 @@
 
         <style>
             body {
-                font-family: Georgia, serif;
+                font-family: "Fira Sans", sans-serif;
                 text-align: center;
             }
         </style>
@@ -16,33 +16,56 @@
         
     </head>
     <body>
-        <div id="main-content">
-            <header>
-                <h1>Upload a File</h1>
-                <button id="theme-toggle">Toggle Dark Mode</button>
-            </header>
+        <header>
+            <h1>Upload a File</h1>
+            <button id="theme-toggle">Toggle Dark Mode</button>
+        </header>
+        <main id="main-content">
+            <div class="upload-place">
+                <div class="tab-container">
+                    <button class="tab-button active" data-tab="file-upload">File Upload</button>
+                    <button class="tab-button" data-tab="text-upload">Text Upload</button>
+                </div>
 
-            <main>
-                <div class="upload-place" id="file-upload">
+                <div id="file-upload" class="tab-content">
                     <form id="fileUploadForm" enctype="multipart/form-data">
                         <label for="fileInput">Choose File:</label>
                         <input 
-                            type="file" 
+                            type="file"
                             id="fileInput" 
                             name="uploadedFile" 
                             accept="image/png, image/jpeg" 
                             required
                         >
+                        <br>
+                        <br>
                         <button type="submit">Upload File</button>
                         <p id="statusMessage"></p>
                     </form>
                 </div>
 
-                <div class="upload-place" id="text-upload">
-                    
+                <div id="text-upload" class="tab-content hidden">
+                    <form id="textUploadForm" enctype="multipart/form-data">
+                        <label for="textInput">Enter Text:</label><br>
+                        <textarea 
+                            id="textInput" 
+                            name="textInput" 
+                            rows="10" 
+                            cols="50" 
+                            placeholder="Type or paste your text here..." 
+                            required
+                        ></textarea><br>
+                        <button type="submit">Submit Text</button>
+                        <p id="textStatusMessage"></p>
+                    </form>
                 </div>
-            </main>
-        </div>
+            
+            </div>
+
+            <div id="response-panel">
+                <p>Responses appear here</p>
+            </div>
+        </main>
 
         <script src="scripts.js"></script>
     </body>

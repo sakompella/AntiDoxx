@@ -5,6 +5,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleButton = document.getElementById('theme-toggle');
     const root = document.documentElement;
 
+    const tabContainer = document.querySelector('.tab-container');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabContainer.addEventListener('click', (e) => {
+        if (e.target.matches('.tab-button')) {
+            // Deactivate all tabs
+            tabContainer.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
+            tabContents.forEach(content => content.classList.add('hidden'));
+
+            // Activate the clicked tab
+            e.target.classList.add('active');
+            const targetContentId = e.target.dataset.tab;
+            document.getElementById(targetContentId).classList.remove('hidden');
+        }
+    });
+
     const savedTheme = localStorage.getItem('theme');
     if(savedTheme) {
         root.style.colorScheme = savedTheme;
