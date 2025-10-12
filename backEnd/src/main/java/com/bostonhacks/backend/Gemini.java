@@ -7,10 +7,9 @@ public final class Gemini {
     private final static Client client = new Client();
     private static Gemini INSTANCE;
 
-    private Gemini() {
-    }
+    private Gemini() {}
 
-    public static Gemini getInstance() {
+    public static synchronized Gemini getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new Gemini();
         }
