@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -92,9 +93,12 @@ public class RequestController {
             return "Error reading file: " + e.getMessage();
         }
     }
+
     @PostMapping("/upload-file")
     public ResponseEntity<Map<String, Object>> uploadFile(
-        @RequestParam("file") MultipartFile file) {
+        Model model,
+        @RequestParam("file") MultipartFile file
+    ) {
         Map<String, Object> response = new HashMap<>();
         if (file.isEmpty()) {
             response.put("success", false);
