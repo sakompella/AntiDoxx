@@ -105,6 +105,23 @@ public class RequestController {
         }
     }
 
+    /*
+    error:
+    {
+      "success": false,
+      "code": -1 // no file uploaded
+      OR
+      "code": -2 // invalid file type
+      "code": -3 | -4  // check message
+    }
+
+    success:
+    {
+      "success": true,
+      "code": 0,
+      "message": "..."
+    }
+     */
     @PostMapping("/upload-file")
     public ResponseEntity<Map<String, Object>> uploadFile(
         Model model,
@@ -113,6 +130,7 @@ public class RequestController {
         Map<String, Object> response = new HashMap<>();
         if (file.isEmpty()) {
             response.put("success", false);
+            response.put("code", -1);
             response.put("message", "Please select a file to upload.");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
@@ -120,6 +138,7 @@ public class RequestController {
         String originalFilename = file.getOriginalFilename();
         if (originalFilename == null || !originalFilename.toLowerCase().endsWith(".txt")) {
             response.put("success", false);
+            response.put("code", -2);
             response.put("message", "Invalid file name.");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
@@ -128,55 +147,15 @@ public class RequestController {
             // This is necessary because SensitiveInfoDetector works with a Path
             Path storedFilePath = storageHandler.storeFile(file);
 
-            // 4. Read the content from the stored file for processing and preview
-            String fileContent = storageHandler.readFileContent(storedFilePath);
-
-            // 5. Detect Sensitive Information using the dedicated service
-            List<String> sensitiveInfoDetections =
-                sensitiveInfoDetector.detectSensitiveInfo(storedFilePath);
-            boolean hasSensitiveInfo = !sensitiveInfoDetections.isEmpty();
-
-            // 6. Populate the response map with file metadata
+            // Populate the response map with file metadata
             response.put("success", true); // The upload itself was successful
-            response.put("originalFilename", originalFilename);
-            response.put("storedFilename", storedFilePath.getFileName().toString());
-            response.put("fileSize", file.getSize());
-            response.put("fileType", file.getContentType());
-            response.put("filePath",
-                storedFilePath.toString()); // The server-side path where it was stored
-
-            // Include a preview of the file content
-            response.put("contentPreview",
-                fileContent.substring(0, Math.min(fileContent.length(), 500)) +
-                    (fileContent.length() > 500 ? "..." : ""));
-
-            // --- 7. Customize the User Message and Flags based on Sensitive Info Detection ---
-            response.put("hasSensitiveInfo", hasSensitiveInfo);
-
-            if (hasSensitiveInfo) {
-                // Construct a detailed warning message for the user
-                StringBuilder messageBuilder = new StringBuilder();
-                messageBuilder.append("WARNING: Sensitive information was detected in your file '")
-                    .append(originalFilename).append("'.\n");
-                messageBuilder.append("Detected items include:\n");
-                // Iterate through detected items and add them to the message
-                sensitiveInfoDetections.forEach(
-                    detection -> messageBuilder.append("- ").append(detection).append("\n"));
-                messageBuilder.append("\nPlease review your file for security concerns.");
-
-                response.put("message", messageBuilder.toString());
-                response.put("sensitiveInfoDetails",
-                    sensitiveInfoDetections); // Provide the raw list of detections
-                // Depending on your policy, you might return HttpStatus.FORBIDDEN here
-                // For now, we'll return OK but with a clear warning in the message.
-                return new ResponseEntity<>(response, HttpStatus.OK);
-            } else {
-                // No sensitive information found
-                response.put("message", "File '" + originalFilename +
-                    "' uploaded successfully and no sensitive information was detected.");
-                response.put("sensitiveInfoDetails", "No sensitive information found.");
-                return new ResponseEntity<>(response, HttpStatus.OK);
-            }
+            response.put("code", 0);
+            response.put("filename", storedFilePath.getFileName().toString());
+            // No sensitive information found
+            response.put("message", "File '" + originalFilename +
+                "' uploaded successfully and no sensitive information was detected.");
+            response.put("sensitiveInfoDetails", "No sensitive information found.");
+            return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (IOException e) {
             // Handle file I/O errors during storage or reading
@@ -184,6 +163,7 @@ public class RequestController {
                 "Error processing file upload for '" + originalFilename + "': " + e.getMessage());
             e.printStackTrace(); // Log the full stack trace for debugging
             response.put("success", false);
+            response.put("code", -3);
             response.put("message", "Failed to upload or process file '" + originalFilename +
                 "' due to a server error: " + e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -194,6 +174,7 @@ public class RequestController {
                     e.getMessage());
             e.printStackTrace();
             response.put("success", false);
+            response.put("code", -4);
             response.put("message", "An unexpected error occurred: " + e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
