@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const textInput = document.getElementById('textInput');
     const textStatusMessage = document.getElementById('textStatusMessage');
     const darkModeToggle = document.getElementById('theme-toggle');
+    const responsePanel = document.getElementById('response-panel');
     const root = document.documentElement;
 
     const tabContainer = document.querySelector('.tab-container');
@@ -62,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         statusMessage.textContent = 'Uploading...';
 
+        let uploadResponse;
         try {
             uploadResponse = await fetch(URLfy('/upload-file'), { // **Replace with your backend URL**
                 method: 'POST',
@@ -69,22 +71,47 @@ document.addEventListener('DOMContentLoaded', () => {
                 // is automatically set correctly by the browser, 
                 // including the boundary required for 'multipart/form-data'. 
                 // Do NOT set it manually.
-                body: formData 
+                body: formData
             });
-
-            if (response.ok) {
-                const result = await response.json(); // Assuming your backend returns JSON
-                statusMessage.textContent = `Upload successful! Response: ${result.message}`;
-                fileUploadForm.reset(); // Clear the form
-            } else {
-                const errorText = await response.text();
-                statusMessage.textContent = `Upload failed. Status: ${response.status}. Error: ${errorText.substring(0, 50)}...`;
-            }
-            adviceResponse = await fetch(URLfy('/file-advice'), {
         } catch (error) {
             console.error('Network error:', error);
             statusMessage.textContent = 'A network error occurred during upload.';
+            return;
         }
+
+        if (!uploadResponse.ok) {
+            const errorText = await uploadResponse.text();
+            statusMessage.textContent = `Upload failed. Status: ${uploadResponse.status}. Error: ${errorText.substring(0, 50)}...`;
+            console.log(errorText);
+            return;
+        }
+        const result = await uploadResponse.json(); // Assuming your backend returns JSON
+        statusMessage.textContent = `Upload successful!`;
+        fileUploadForm.reset(); // Clear the form
+
+        let adviceResponse;
+        try {
+            adviceResponse = await fetch(URLfy('/file-advice'), {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({filename: result.filename})
+            });
+        } catch (error) {
+            console.error('Network error:', error);
+            statusMessage.textContent = 'A network error occurred during upload.';
+            return;
+        }
+
+        if (!adviceResponse.ok) {
+            const errorText = await adviceResponse.text();
+            statusMessage.textContent = `Upload failed. Status: ${adviceResponse.status}. Error: ${errorText.substring(0, 50)}...`;
+            console.log(errorText);
+            return;
+        }
+
+        responsePanel.textContent = await adviceResponse.json().message;
     });
 
     textUploadForm.addEventListener('submit', async (event) => {
