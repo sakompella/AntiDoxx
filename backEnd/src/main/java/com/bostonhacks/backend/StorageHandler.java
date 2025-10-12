@@ -1,5 +1,6 @@
 package com.bostonhacks.backend;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -18,7 +19,6 @@ public class StorageHandler {
     private StorageHandler() throws IOException {
         String tmpDir = System.getProperty("java.io.tmpdir");
         this.storageDirectory = Paths.get(tmpDir, "bostonhacks-uploads").toAbsolutePath().normalize();
-
         if (!Files.exists(storageDirectory)) {
             Files.createDirectories(storageDirectory);
             System.out.println("Upload directory created: " + this.storageDirectory);
@@ -104,4 +104,15 @@ public class StorageHandler {
         Path filePath = storageDirectory.resolve(filename);
         Files.deleteIfExists(filePath);
     }
+
+    public Path fetchFile(String filename) throws IOException {
+        Path targetLocation = this.storageDirectory.resolve(filename);
+        if (Files.exists(targetLocation)) {
+            return targetLocation;
+        } else {
+            System.out.println("File not found: " + filename);
+            return null;
+        }
+    }
 }
+
