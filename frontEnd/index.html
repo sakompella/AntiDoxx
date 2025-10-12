@@ -3,6 +3,14 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width", initial-scale="1.0">
+        <title>Sensisitivity Detector</title>
+
+        <style>
+            body {
+                font-family: Georgia, serif;
+                text-align: center;
+            }
+        </style>
 
         <link rel="stylesheet" type="text/css" href="styles.css">
         
@@ -11,21 +19,31 @@
         <div id="main-content">
             <header>
                 <h1>Upload a File</h1>
+                <button id="theme-toggle">Toggle Dark Mode</button>
             </header>
+
             <main>
                 <div class="upload-place" id="file-upload">
-                <form id="fileUploadForm" enctype="multipart/form-data">
-                <label for="fileInput">Choose File:</label>
-                <input type="file" id="fileInput" name="uploadedFile" accept="image/png, image/jpeg, " required>
-                <button type="submit">Upload File</button>
-                <p id="statusMessage"></p>
-                </form>
+                    <form id="fileUploadForm" enctype="multipart/form-data">
+                        <label for="fileInput">Choose File:</label>
+                        <input 
+                            type="file" 
+                            id="fileInput" 
+                            name="uploadedFile" 
+                            accept="image/png, image/jpeg" 
+                            required
+                        >
+                        <button type="submit">Upload File</button>
+                        <p id="statusMessage"></p>
+                    </form>
                 </div>
+
                 <div class="upload-place" id="text-upload">
                     
                 </div>
             </main>
         </div>
+
         <script src="scripts.js"></script>
     </body>
 </html>
