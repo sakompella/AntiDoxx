@@ -68,8 +68,9 @@ public class RequestController {
         }
 
         try {
+
             // Extract text content from the response by parsing the string representation
-            String responseStr = response.toString();
+            String responseStr = response.text();
 
             // Find the text content in the response string
             // This is a simple approach to extract the actual content from the response
@@ -84,6 +85,14 @@ public class RequestController {
                 content = content.replaceAll("^[\"']|[\"']$", ""); // Remove quotes
                 return content.trim();
             }
+
+            while (responseStr.contains("Optional[")) {
+                int begin = responseStr.lastIndexOf("Optional[");
+                int end = responseStr.indexOf("]", begin);
+                responseStr = responseStr.substring(begin + 9, end);
+            }
+
+            logger.info("Response Body: " + responseStr);
 
             return responseStr.trim();
         } catch (Exception e) {

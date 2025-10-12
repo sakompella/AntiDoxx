@@ -54,13 +54,21 @@ public class OCRService {
             }
 
             Map<String, Object> responseBody = response.getBody();
+            logger.info("Response Body: " + responseBody);
+
             List<Map<String, Object>> parsedResults = (List<Map<String, Object>>) responseBody.get("ParsedResults");
 
             if (parsedResults == null || parsedResults.isEmpty()) {
                 return "";
             }
 
-            return (String) parsedResults.getFirst().get("ParsedText");
+            StringBuilder result = new StringBuilder();
+
+            for (Map<String, Object> parsedResult : parsedResults) {
+                result.append(parsedResult.get("ParsedText"));
+            }
+
+            return result.toString();
         } catch (IOException e) {
             logger.error("Error reading image file: {}", imageFile.getAbsolutePath(), e);
             return "";
