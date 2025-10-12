@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const darkModeToggle = document.getElementById('theme-toggle');
     const responsePanel = document.getElementById('response-panel');
     const root = document.documentElement;
-
+    const loader = document.getElementById('load-div')
     const tabContainer = document.querySelector('.tab-container');
     const tabContents = document.querySelectorAll('.tab-content');
 
@@ -95,7 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
             statusMessage.textContent = 'Please select a file to upload.';
             return;
         }
-
         const file = fileInput.files[0];
         const formData = new FormData();
         
@@ -108,6 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // formData.append('userId', '12345'); 
 
         statusMessage.textContent = 'Uploading...';
+        loader.classList.remove('loader-div');
 
         let uploadResponse;
         try {
@@ -171,6 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
             statusMessage.textContent = 'Error: Invalid response format from advice service.';
             return;
         }
+        loader.classList.add('loader-div');
         displayFormattedResponse(adviceResult.message);
     });
 
@@ -184,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         textStatusMessage.textContent = 'Submitting...';
-
+        loader.classList.remove('active');
         try {
             // **Replace with your backend URL for text submission**
             const response = await fetch(URLfy(`/text-advice?text=${encodeURIComponent(text)}`), {
@@ -196,6 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 let result;
+                loader.classList.add('loader-div');
                 try {
                     result = await response.json();
                 } catch (jsonError) {

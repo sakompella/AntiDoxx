@@ -1,6 +1,8 @@
 *{
     margin: 0;
     box-sizing: border-box;
+    font-family: "Micro 5", sans-serif;
+    font-size: 20px;
 }
 
 :root {
@@ -8,10 +10,11 @@
 }
 
 body {
-  font-family: "Fira Sans", sans-serif;
-  text-align: center;
-  background-color: light-dark(white, black);
-  color: light-dark(black, white);
+    font-family: inherit;
+    text-align: center;
+    background-color: light-dark(white, black);
+    color: light-dark(black, white);
+    font-size: 20px;
 }
 
 header {
@@ -19,14 +22,15 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    border-bottom: 1px solid light-dark(#ccc, #555);
+    border-bottom: 2px solid light-dark(#ccc, #555);
+    background-color: light-dark(#0048ff,#00278a);
 }
 
 #input-panel, #response-panel {
     flex: 1;
     padding: 20px;
-    border: 1px solid light-dark(#ccc, #555);
-    border-radius: 5px;
+    border: 2px solid light-dark(#ccc, #555);
+    border-radius: 0px;
     background-color: light-dark(#f9f9f9, #1e1e1e);
 }
 
@@ -35,10 +39,10 @@ header {
     font-family: inherit;
     font-size: 1rem;
     cursor: pointer;
-    border: 1px solid #333;
+    border: 2px solid #333;
     background-color: light-dark(#f2f2f2, #333);
     color: light-dark(#333, #f2f2f2);
-    border-radius: 8px;
+    border-radius: 0px;
     transition: background-color 0.3s;
 }
 
@@ -48,6 +52,7 @@ header {
     justify-content: space-between;
     padding: 20px;
     gap: 20px;
+    font-size: 20px;
 }
 
 .upload-place {
@@ -64,8 +69,9 @@ header {
     max-width: 100%;
     margin: 0;
     padding: 20px;
-    border: 1px solid light-dark(#ccc, #555);
-    border-radius: 5px;
+    border: 2px solid light-dark(#ccc, #555);
+    border-radius: 0px;
+    font-size: 20px;
 }
 
 #textUploadForm {
@@ -74,8 +80,9 @@ header {
     max-width: 800px;
     margin: 0;
     padding: 20px;
-    border: 1px solid light-dark(#ccc, #555);
-    border-radius: 5px;
+    border: 2px solid light-dark(#ccc, #555);
+    border-radius: 0px;
+    font-size: 20px;
 }
 
 #response-panel {
@@ -84,8 +91,8 @@ header {
     max-width: 800px;
     margin: 0;
     padding: 20px;
-    border: 1px solid light-dark(#ccc, #555);
-    border-radius: 5px;
+    border: 2px solid light-dark(#ccc, #555);
+    border-radius: 0px;
     background-color: light-dark(#f9f9f9, #1e1e1e);
     overflow-y: auto;
     max-height: 80vh;
@@ -105,11 +112,14 @@ header {
     background-color: transparent;
     color: inherit;
     border-bottom: 3px solid transparent;
+    box-shadow: 3px 3px 0px #666;
 }
 
 .tab-button.active {
-    border-bottom-color: #007bff;
+    border-bottom-color: #0048ff;
     font-weight: bold;
+    border: 2px solid #001b60;
+    box-shadow: 3px 3px 0px #666;
 }
 
 .tab-content.hidden {
@@ -120,20 +130,29 @@ textarea {
     width: 100%;
     padding: 8px;
     margin-bottom: 10px;
-    border-radius: 3px;
+    border-radius: 0px;
     border: 1px solid light-dark(#ccc, #555);
     background-color: light-dark(white, #2c2c2c);
     color: inherit;
+    resize: none;
     font-family: inherit;
 }
 
 button {
     padding: 10px 15px;
-    background-color: #007bff;
+    background-color: #0048ff;
     color: white;
-    border: none;
-    border-radius: 3px;
+    border: 2px solid #001b60;
+    box-shadow: 3px 3px 0px #666;
     cursor: pointer;
+}
+
+input[type="file"]::file-selector-button {
+    background-color: light-dark(#0048ff, #001b60);
+    border: 2px;
+    border-radius: 0px;
+    cursor: pointer;
+    font-family: inherit;
 }
 
 #statusMessage {
@@ -145,7 +164,7 @@ button {
     text-align: left;
     background-color: light-dark(#ffffff, #2a2a2a);
     border: 1px solid light-dark(#e0e0e0, #404040);
-    border-radius: 8px;
+    border-radius: 0px;
     padding: 20px;
     margin: 10px 0;
     box-shadow: 0 2px 4px light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.05));
@@ -164,7 +183,7 @@ button {
 }
 
 .analysis-content h4 {
-    color: light-dark(#555, #ccc);
+    color: light-dark(#666, #ccc);
     font-size: 1.1em;
     margin: 15px 0 8px 0;
     padding: 5px 0;
@@ -202,7 +221,37 @@ button {
     background-color: light-dark(#f8f8f8, #3a3a3a);
     color: light-dark(#d73a49, #ff7b72);
     padding: 2px 4px;
-    border-radius: 3px;
+    border-radius: 0px;
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     font-size: 0.9em;
+}
+
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #0048ff; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    padding: 20px;
+    margin: auto;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.load-css {
+    padding-top: 20px;
+}
+
+.loader-div {
+    display: none;
+}
+
+.micro-5-regular {
+  font-family: inherit;
+  font-weight: 400;
+  font-style: normal;
 }

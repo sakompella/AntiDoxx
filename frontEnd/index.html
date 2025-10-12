@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Micro+5&display=swap" rel="stylesheet">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Sensitivity Detector</title>
@@ -10,7 +13,7 @@
     </head>
     <body>
         <header>
-            <h1>Upload a File</h1>
+            <h1>Analyze Your File</h1>
             <button id="theme-toggle">Toggle Dark Mode</button>
         </header>
         <main id="main-content">
@@ -45,7 +48,7 @@
                             name="textInput" 
                             rows="10" 
                             cols="50" 
-                            placeholder="Type or paste your text here..." 
+                            placeholder="Type or paste your text here..."
                             required
                         ></textarea><br>
                         <button type="submit">Submit Text</button>
@@ -57,6 +60,10 @@
 
             <div id="response-panel">
                 <p>Responses appear here</p>
+                <!-- <br class="hidden1"> -->
+                 <div class="loader-div" class="load-css" id="load-div">
+                <div class="loader" class="hidden1"></div> 
+                </div>
             </div>
         </main>
 
