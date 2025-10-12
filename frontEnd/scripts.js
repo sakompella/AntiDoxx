@@ -42,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const file = fileInput.files[0];
         const formData = new FormData();
-
         
         
         // Append the file to the FormData object.
@@ -55,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
         statusMessage.textContent = 'Uploading...';
 
         try {
-            const response = await fetch('/upload-endpoint', { // **Replace with your backend URL**
+            const response = await fetch('http://localhost:8000/upload-file', { // **Replace with your backend URL**
                 method: 'POST',
                 // When using FormData, the 'Content-Type' header 
                 // is automatically set correctly by the browser, 
