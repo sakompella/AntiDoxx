@@ -98,6 +98,26 @@ public class RequestController {
         }
     }
 
+    @GetMapping("/image-advice")
+    public String getImageAdvice(@RequestParam("filename") String filename) {
+        try {
+            Path filePath = storageHandler.fetchFile(filename);
+            if (filePath == null) {
+                return "Error: File not found - " + filename;
+            }
+
+            String prompt =
+                "Please search this image and examine if there's any personally identifiable information.";
+            Content[] contentArr = {Content.fromParts(Part.fromText(prompt))};
+            GenerateContentResponse response =
+                Gemini.getInstance().getGemini().models.generateContent("gemini-2.5-flash",
+                    Arrays.asList(contentArr), null);
+            return response.toString();
+        } catch (Exception e) {
+            return "Error analyzing image: " + e.getMessage();
+        }
+    }
+
     /*
     error:
     {
@@ -166,26 +186,6 @@ public class RequestController {
             response.put("code", -4);
             response.put("message", "An unexpected error occurred: " + e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @GetMapping("/image-advice")
-    public String getImageAdvice(@RequestParam("filename") String filename) {
-        try {
-            Path filePath = storageHandler.fetchFile(filename);
-            if (filePath == null) {
-                return "Error: File not found - " + filename;
-            }
-
-            String prompt =
-                "Please search this image and examine if there's any personally identifiable information.";
-            Content[] contentArr = {Content.fromParts(Part.fromText(prompt))};
-            GenerateContentResponse response =
-                Gemini.getInstance().getGemini().models.generateContent("gemini-2.5-flash",
-                    Arrays.asList(contentArr), null);
-            return response.toString();
-        } catch (Exception e) {
-            return "Error analyzing image: " + e.getMessage();
         }
     }
 }
