@@ -1,8 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('fileUploadForm');
+    const fileUploadForm = document.getElementById('fileUploadForm');
     const fileInput = document.getElementById('fileInput');
     const statusMessage = document.getElementById('statusMessage');
-    const toggleButton = document.getElementById('theme-toggle');
+    const textUploadForm = document.getElementById('textUploadForm');
+    const textInput = document.getElementById('textInput');
+    const textStatusMessage = document.getElementById('textStatusMessage');
+    const darkModeToggle = document.getElementById('theme-toggle');
     const root = document.documentElement;
 
     const tabContainer = document.querySelector('.tab-container');
@@ -26,13 +29,13 @@ document.addEventListener('DOMContentLoaded', () => {
         root.style.colorScheme = savedTheme;
     }
 
-    toggleButton.addEventListener('click', () => {
+    darkModeToggle.addEventListener('click', () => {
         const currentScheme = root.style.colorScheme === 'dark' ? 'light' : 'dark';
         root.style.colorScheme = currentScheme;
         localStorage.setItem('theme', currentScheme);
     });
 
-    form.addEventListener('submit', async (event) => {
+    fileUploadForm.addEventListener('submit', async (event) => {
         event.preventDefault(); // Stop the default form submission
 
         if (fileInput.files.length === 0) {
@@ -66,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 const result = await response.json(); // Assuming your backend returns JSON
                 statusMessage.textContent = `Upload successful! Response: ${result.message}`;
-                form.reset(); // Clear the form
+                fileUploadForm.reset(); // Clear the form
             } else {
                 const errorText = await response.text();
                 statusMessage.textContent = `Upload failed. Status: ${response.status}. Error: ${errorText.substring(0, 50)}...`;
@@ -74,6 +77,41 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('Network error:', error);
             statusMessage.textContent = 'A network error occurred during upload.';
+        }
+    });
+
+    textUploadForm.addEventListener('submit', async (event) => {
+        event.preventDefault(); // Prevent the form from reloading the page
+
+        const text = textInput.value.trim();
+        if (!text) {
+            textStatusMessage.textContent = 'Please enter some text to submit.';
+            return;
+        }
+
+        textStatusMessage.textContent = 'Submitting...';
+
+        try {
+            // **Replace with your backend URL for text submission**
+            const response = await fetch('http://localhost:8000/upload-text', { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ text: text }) 
+            });
+
+            if (response.ok) {
+                const result = await response.json(); // Assuming JSON response
+                textStatusMessage.textContent = `Submission successful! Response: ${result.message}`;
+                textUploadForm.reset(); // Clear the form
+            } else {
+                const errorText = await response.text();
+                textStatusMessage.textContent = `Submission failed. Status: ${response.status}. Error: ${errorText}`;
+            }
+        } catch (error) {
+            console.error('Network error:', error);
+            textStatusMessage.textContent = 'A network error occurred during submission.';
         }
     });
 });
