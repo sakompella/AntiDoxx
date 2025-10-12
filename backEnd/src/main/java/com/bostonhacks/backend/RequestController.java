@@ -10,6 +10,8 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import net.sourceforge.tess4j.TesseractException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -96,8 +98,11 @@ public class RequestController {
         @RequestParam("filename") String filename) {
         try {
             Path filePath = storageHandler.fetchFile(filename);
-            if (filePath == null) {
-                logger.error("File not found: {}", filename);
+            String mimeType = storageHandler.mimeType(file);
+            if(mimeType.contains("image")){
+                OCRService ocrService = new OCRService();
+                String fileName = ocrService.extractTextFromImage(StorageHandler.getInstance().fetchFile(filename).toFile());
+                file = storageHandler.fetchFile(fileName);
                 return new ResponseEntity<>(
                     Map.of("code", -1, "message", "Error: File not found - " + filename),
                     HttpStatus.BAD_REQUEST);
@@ -129,6 +134,9 @@ public class RequestController {
             return new ResponseEntity<>(
                 Map.of("code", -1, "message", "Error: Unable to read file - " + e.getMessage()),
                 HttpStatus.BAD_REQUEST);
+        } catch (TesseractException e) {
+            throw new RuntimeException(e);
+        }
         } catch (Exception e) {
             logger.error("Error analyzing file: {}", filename, e);
             return new ResponseEntity<>(
