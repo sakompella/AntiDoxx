@@ -1,3 +1,9 @@
+const URL = 'http://localhost:8000';
+
+function URLfy(path) {
+    return URL + path;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const fileUploadForm = document.getElementById('fileUploadForm');
     const fileInput = document.getElementById('fileInput');
@@ -57,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         statusMessage.textContent = 'Uploading...';
 
         try {
-            const response = await fetch('http://localhost:8000/upload-file', { // **Replace with your backend URL**
+            uploadResponse = await fetch(URLfy('/upload-file'), { // **Replace with your backend URL**
                 method: 'POST',
                 // When using FormData, the 'Content-Type' header 
                 // is automatically set correctly by the browser, 
@@ -74,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const errorText = await response.text();
                 statusMessage.textContent = `Upload failed. Status: ${response.status}. Error: ${errorText.substring(0, 50)}...`;
             }
+            adviceResponse = await fetch(URLfy('/file-advice'), {
         } catch (error) {
             console.error('Network error:', error);
             statusMessage.textContent = 'A network error occurred during upload.';
@@ -93,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // **Replace with your backend URL for text submission**
-            const response = await fetch('http://localhost:8000/upload-text', { 
+            const response = await fetch(URLfy('/text-advice'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
