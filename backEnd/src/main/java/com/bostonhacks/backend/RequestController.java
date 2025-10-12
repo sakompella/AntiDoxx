@@ -4,10 +4,9 @@ import com.google.genai.types.Content;
 import com.google.genai.types.GenerateContentResponse;
 import com.google.genai.types.Part;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,19 +35,14 @@ public class RequestController {
     }
 
     private String analyzeTextWithGemini(String content) {
-        try {
-            String prompt =
-                "Please analyze this text and check for personally identifiable information (PII)";
-            Content[] contentArr =
-                {Content.fromParts(Part.fromBytes(content.getBytes(), "text/markdown")),
-                    Content.fromParts(Part.fromText(prompt))};
-            var response =
-                Gemini.getInstance().getGemini().models.generateContent("gemini-2.5-flash",
-                    Arrays.asList(contentArr), null);
-            return response.toString();
-        } catch (Exception e) {
-            return "Error analyzing text: " + e.getMessage();
-        }
+        String prompt =
+            "Please analyze this text and check for personally identifiable information (PII)";
+        Content[] contentArr =
+            {Content.fromParts(Part.fromBytes(content.getBytes(), "text/markdown")),
+                Content.fromParts(Part.fromText(prompt))};
+        var response = Gemini.getInstance().getGemini().models.generateContent("gemini-2.5-flash",
+            Arrays.asList(contentArr), null);
+        return response.toString();
     }
 
     /**
@@ -67,19 +61,11 @@ public class RequestController {
      * @return text advice
      */
     @GetMapping("/text-advice")
-    public String getTextAdvice(@RequestBody String input) {
+    public Map<String, Serializable> getTextAdvice(@RequestBody String input) {
         try {
-            // Step 1: Save input string as a temporary .txt file
-            Path tempFile = StorageHandler.getInstance().fetchFile(input);
-            Files.writeString(tempFile, input, StandardCharsets.UTF_8);
-            System.out.println("File created: " + tempFile.toAbsolutePath());
-
-            // Step 2: Analyze the text directly
-            return analyzeTextWithGemini(input);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "Error: Unable to process text - " + e.getMessage();
+            return Map.of("code", 0, "message", analyzeTextWithGemini(input));
+        } catch (Exception e) {
+            return Map.of("code", -1, "message", "Error: " + e.getMessage());
         }
     }
 
@@ -90,17 +76,25 @@ public class RequestController {
      * @return text advice
      */
     @GetMapping("/textfile-advice")
-    public String getTextFile(@RequestParam("filename") String filename) {
+    public ResponseEntity<Map<String, Serializable>> getTextFile(
+        @RequestParam("filename") String filename) {
         try {
-            // 1. Read the file contents as text
-            Path filePath = Paths.get("uploads", filename);
-            String fileContent = Files.readString(filePath);
+            Path file = storageHandler.fetchFile(filename);
+            if (!storageHandler.mimeType(file).contains("text")) {
+                logger.error("File is not a text file: {}", filename);
+                return new ResponseEntity<>(
+                    Map.of("code", -1, "message", "Error: File is not a text file."),
+                    HttpStatus.BAD_REQUEST);
+            }
 
-            // 2. Analyze the file content
-            return analyzeTextWithGemini(fileContent);
+            String fileContent = Files.readString(file);
 
+            return new ResponseEntity<>(
+                Map.of("code", 0, "message", analyzeTextWithGemini(fileContent)), HttpStatus.OK);
         } catch (IOException e) {
-            return "Error reading file: " + e.getMessage();
+            logger.error("Error fetching file: {}", filename, e);
+            return new ResponseEntity<>(Map.of("code", -1, "message", "Error: File not found."),
+                HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -122,10 +116,8 @@ public class RequestController {
     }
      */
     @PostMapping("/upload-file")
-    public ResponseEntity<Map<String, Object>> uploadFile(
-        Model model,
-        @RequestParam("file") MultipartFile file
-    ) {
+    public ResponseEntity<Map<String, Object>> uploadFile(Model model, @RequestParam("file")
+    MultipartFile file) {
         Map<String, Object> response = new HashMap<>();
         if (file.isEmpty()) {
             response.put("success", false);
@@ -151,8 +143,7 @@ public class RequestController {
             response.put("code", 0);
             response.put("filename", storedFilePath.getFileName().toString());
             // No sensitive information found
-            response.put("message", "File '" + originalFilename +
-                "' uploaded successfully.");
+            response.put("message", "File '" + originalFilename + "' uploaded successfully.");
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (IOException e) {
@@ -186,15 +177,12 @@ public class RequestController {
                 return "Error: File not found - " + filename;
             }
 
-            String prompt = "Please search this image and examine if there's any personally identifiable information.";
-            Content[] contentArr = {
-                Content.fromParts(Part.fromText(prompt))
-            };
-            GenerateContentResponse response = Gemini.getInstance().getGemini().models.generateContent(
-                "gemini-2.5-flash",
-                Arrays.asList(contentArr),
-                null
-            );
+            String prompt =
+                "Please search this image and examine if there's any personally identifiable information.";
+            Content[] contentArr = {Content.fromParts(Part.fromText(prompt))};
+            GenerateContentResponse response =
+                Gemini.getInstance().getGemini().models.generateContent("gemini-2.5-flash",
+                    Arrays.asList(contentArr), null);
             return response.toString();
         } catch (Exception e) {
             return "Error analyzing image: " + e.getMessage();
