@@ -3,6 +3,33 @@
     box-sizing: border-box;
 }
 
+:root {
+  color-scheme: light dark; /* Enables light-dark() functionality */
+}
+
+body {
+  background-color: light-dark(white, black); /* Light mode: white, Dark mode: black */
+  color: light-dark(black, white); /* Light mode: black, Dark mode: white */
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+#theme-toggle {
+    padding: 6px 12px;
+    font-family: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+    border: 1px solid #333;
+    background-color: #333;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}
+
 #main-content {
     width: 80%;
 }

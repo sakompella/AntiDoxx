@@ -2,6 +2,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('fileUploadForm');
     const fileInput = document.getElementById('fileInput');
     const statusMessage = document.getElementById('statusMessage');
+    const toggleButton = document.getElementById('theme-toggle');
+    const root = document.documentElement;
+
+    const savedTheme = localStorage.getItem('theme');
+    if(savedTheme) {
+        root.style.colorScheme = savedTheme;
+    }
+
+    toggleButton.addEventListener('click', () => {
+        const currentScheme = root.style.colorScheme === 'dark' ? 'light' : 'dark';
+        root.style.colorScheme = currentScheme;
+        localStorage.setItem('theme', currentScheme);
+    });
 
     form.addEventListener('submit', async (event) => {
         event.preventDefault(); // Stop the default form submission
@@ -13,6 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const file = fileInput.files[0];
         const formData = new FormData();
+
+        
         
         // Append the file to the FormData object.
         // The 'uploadedFile' key must match the name your backend expects.
