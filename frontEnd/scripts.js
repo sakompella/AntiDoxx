@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Append the file to the FormData object.
         // The 'uploadedFile' key must match the name your backend expects.
-        formData.append('uploadedFile', file); 
+        formData.append('file', file);
 
         // Optional: Append other data if needed
         // formData.append('userId', '12345'); 
