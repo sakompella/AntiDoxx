@@ -33,7 +33,9 @@ public class RequestController {
             "credit card numbers, IP addresses, and other potentially sensitive data. " +
             "Provide a clear, structured analysis highlighting any findings. " +
             "Keep the response concise and focused solely on identifying sensitive information. " +
-            "Do NOT provide any additional commentary or suggestions beyond the identification of PII. ";
+            "Do NOT provide any additional commentary or suggestions beyond the identification of PII. " +
+            "If no sensitive information is found, simply state 'No sensitive information detected.' " +
+            "Respond in plaintext format, without markdown formatting.";
 
     Logger logger = LoggerFactory.getLogger(RequestController.class);
 
