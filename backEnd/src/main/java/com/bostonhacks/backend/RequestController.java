@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,12 +62,26 @@ public class RequestController {
      */
     @GetMapping("/text-advice")
     public String getTextAdvice(@RequestParam("file") String filename) {
-        // fixme return str
-        return Gemini.getInstance().getGemini().models.generateContent(
-            "gemini-2.5-flash",
-            "Please search this text file and examine if there's any personally identifiable information.",
-            null
-        ).toString();
+        try {
+            // 1. Read the file contents as text
+            Path filePath = Paths.get("uploads", filename); // adjust your path if needed
+            String fileContent = Files.readString(filePath);
+
+            // 2. Call Gemini API with the file content
+            String prompt = "Please analyze this text and check for personally identifiable information (PII):\n\n" + fileContent;
+
+            var response = Gemini.getInstance().getGemini().models.generateContent(
+                    "gemini-2.5-flash",
+                    prompt,
+                    null
+            );
+
+            // 3. Return Gemini’s answer
+            return response.toString();
+
+        } catch (IOException e) {
+            return "Error reading file: " + e.getMessage();
+        }
     }
 
     @PostMapping("/upload-file")
