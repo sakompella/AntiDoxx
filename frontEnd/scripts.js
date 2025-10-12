@@ -111,7 +111,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        responsePanel.textContent = await adviceResponse.json().message;
+        const adviceResult = await adviceResponse.json();
+        responsePanel.textContent = adviceResult.message;
     });
 
     textUploadForm.addEventListener('submit', async (event) => {
@@ -136,9 +137,10 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (response.ok) {
-                const result = await response.json(); // Assuming JSON response
-                textStatusMessage.textContent = `Submission successful! Response: ${result.message}`;
-                textUploadForm.reset(); // Clear the form
+                const result = await response.json();
+                textStatusMessage.textContent = 'Submission successful!';
+                responsePanel.textContent = result.message;
+                textUploadForm.reset();
             } else {
                 const errorText = await response.text();
                 textStatusMessage.textContent = `Submission failed. Status: ${response.status}. Error: ${errorText}`;
