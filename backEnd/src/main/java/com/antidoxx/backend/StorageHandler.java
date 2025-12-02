@@ -1,4 +1,4 @@
-package com.bostonhacks.backend;
+package com.antidoxx.backend;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -19,7 +19,7 @@ public class StorageHandler {
     public StorageHandler() throws IOException {
         String tmpDir = System.getProperty("java.io.tmpdir");
         this.storageDirectory =
-            Paths.get(tmpDir, "bostonhacks-uploads").toAbsolutePath().normalize();
+            Paths.get(tmpDir, "antidoxx-uploads").toAbsolutePath().normalize();
         if (!Files.exists(storageDirectory)) {
             Files.createDirectories(storageDirectory);
             System.out.println("Upload directory created: " + this.storageDirectory);

@@ -1,4 +1,4 @@
-package com.bostonhacks.backend;
+package com.antidoxx.backend;
 
 import org.springframework.stereotype.Service;
 

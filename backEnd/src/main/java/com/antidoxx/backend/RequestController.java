@@ -1,4 +1,4 @@
-package com.bostonhacks.backend;
+package com.antidoxx.backend;
 
 import java.io.IOException;
 import java.io.Serializable;
